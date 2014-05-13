@@ -1,0 +1,10 @@
+---
+# handlers
+- name: update grub
+  command: update-grub
+
+- name: mount cgroup
+  command: mount cgroup
+
+- name: restart network
+  command: service networking restart

@@ -1,0 +1,44 @@
+---
+
+# Install LXC
+- name: install packages
+  apt: name={{ item }} state=present force=yes
+  tags: lxc
+  with_items:
+    - lxc
+    - bridge-utils
+    - debootstrap
+    - git
+    - git-core
+    - linux-image-amd64
+    - dnsmasq
+    - dnsmasq-utils
+
+- stat: path=/usr/share/lxc/templates/lxc-debian-wheezy
+  register: lxc_template_installed
+
+# Alternative templates
+- name: copy better squeeze template
+  copy: src=lxc-debian-0.9.0-upstream dest=/usr/share/lxc/templates/lxc-debian-squeeze owner=root group=root mode=0755
+  when: lxc_template_installed|success
+
+- name: copy better wheezy template
+  copy: src=lxc-debian-0.9.0-upstream dest=/usr/share/lxc/templates/lxc-debian-wheezy owner=root group=root mode=0755
+  when: lxc_template_installed|success
+
+# Grub
+- lineinfile: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX_DEFAULT' line='GRUB_CMDLINE_LINUX_DEFAULT="quiet cgroup_enable=memory swapaccount=1"' backup=yes
+  notify: update grub
+
+# Mount cgroup+fstab
+- mount: src=cgroup name='/sys/fs/cgroup' opts=defaults fstype=cgroup state=mounted
+
+# network interface
+- name: configure network interfaces
+  template: src=interfaces.j2 dest=/etc/network/interfaces backup=yes
+#  notify: restart network
+
+# Dnsmasq
+- name: configure dnsmasq
+  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.conf owner=root group=root mode=0644
+

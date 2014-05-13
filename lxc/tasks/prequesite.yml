@@ -1,0 +1,9 @@
+---
+# LXC prequesite
+
+- name: adding testing repository
+  apt_repository: repo='deb http://ftp.fr.debian.org/debian/ testing main non-free contrib' state=present
+
+- name: add debian pinning
+  copy: src=kernel.list dest=/etc/apt/preferences.d/kernel.list owner=root group=root mode=0644
+

@@ -1,0 +1,19 @@
+Package: *
+Pin: release a=stable
+Pin-priority: 900
+ 
+Package: *
+Pin: release a=testing
+Pin-priority: 100
+ 
+Package: linux-image-*
+Pin: release a=testing
+Pin-priority: 1001
+ 
+Package: linux-headers-*
+Pin: release a=testing
+Pin-priority: 1001
+ 
+Package: linux-kbuild-*
+Pin: release a=testing
+Pin-priority: 1001
