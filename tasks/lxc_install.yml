@@ -10,21 +10,24 @@
     - debootstrap
     - git
     - git-core
-    - linux-image-amd64
     - dnsmasq
     - dnsmasq-utils
+    - kexec-tools
+
+# Install latest kernel image from backports
+- name: install backport kernel
+  apt: name=linux-image-amd64 state=latest default_release=wheezy-backports force=yes
 
 - stat: path=/usr/share/lxc/templates/lxc-debian-wheezy
-  register: lxc_template_installed
+  register: lxc_template_absent
 
-# Alternative templates
 - name: copy better squeeze template
-  copy: src=lxc-debian-0.9.0-upstream dest=/usr/share/lxc/templates/lxc-debian-squeeze owner=root group=root mode=0755
-  when: lxc_template_installed|success
+  copy: src=lxc-debian-0.9.0-upstream-squeeze dest=/usr/share/lxc/templates/lxc-debian-squeeze owner=root group=root mode=0755
+  when: lxc_template_absent|success
 
 - name: copy better wheezy template
-  copy: src=lxc-debian-0.9.0-upstream dest=/usr/share/lxc/templates/lxc-debian-wheezy owner=root group=root mode=0755
-  when: lxc_template_installed|success
+  copy: src=lxc-debian-0.9.0-upstream-wheezy dest=/usr/share/lxc/templates/lxc-debian-wheezy owner=root group=root mode=0755
+  when: lxc_template_absent|success
 
 # Grub
 - lineinfile: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX_DEFAULT' line='GRUB_CMDLINE_LINUX_DEFAULT="quiet cgroup_enable=memory swapaccount=1"' backup=yes

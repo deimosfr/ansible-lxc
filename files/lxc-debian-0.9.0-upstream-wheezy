@@ -20,7 +20,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-SUITE=${SUITE:-squeeze}
+SUITE=${SUITE:-wheezy}
 MIRROR=${MIRROR:-http://cdn.debian.net/debian}
 
 configure_debian()
@@ -162,9 +162,9 @@ copy_debian()
 
 install_debian()
 {
-    cache="@LOCALSTATEDIR@/cache/lxc/debian"
+    cache="/usr/share/lxc/cache/lxc/debian"
     rootfs=$1
-    mkdir -p @LOCALSTATEDIR@/lock/subsys/
+    mkdir -p /var/lock/subsys/
     (
         flock -x 200
         if [ $? -ne 0 ]; then
@@ -191,7 +191,7 @@ install_debian()
 
         return 0
 
-        ) 200>@LOCALSTATEDIR@/lock/subsys/lxc-debian
+        ) 200>/var/lock/subsys/lxc-debian
 
     return $?
 }
@@ -243,7 +243,7 @@ EOF
 
 clean()
 {
-    cache="@LOCALSTATEDIR@/cache/lxc/debian"
+    cache="/usr/share/lxc/cache/lxc/debian"
 
     if [ ! -e $cache ]; then
         exit 0
@@ -261,7 +261,7 @@ clean()
         rm --preserve-root --one-file-system -rf $cache && echo "Done." || exit 1
         exit 0
 
-    ) 200>@LOCALSTATEDIR@/lock/subsys/lxc-debian
+    ) 200>/var/lock/subsys/lxc-debian
 }
 
 usage()

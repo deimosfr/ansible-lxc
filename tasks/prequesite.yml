@@ -1,9 +1,19 @@
 ---
 # LXC prequesite
 
-- name: adding testing repository
-  apt_repository: repo='deb http://ftp.fr.debian.org/debian/ testing main non-free contrib' state=present
+- name: adding backport repository
+  apt_repository: repo='deb http://ftp.fr.debian.org/debian wheezy-backports main' state=present
 
-- name: add debian pinning
-  copy: src=kernel.list dest=/etc/apt/preferences.d/kernel.list owner=root group=root mode=0644
+#- name: add debian pinning
+#  copy: src=kernel.list dest=/etc/apt/preferences.d/kernel.list owner=root group=root mode=0644
 
+# Enable ip_forward
+- sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+
+# Avoid a bug in Debian with latest kernel (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=679086)
+- name: blacklist modules
+  kernel_blacklist: name={{ item }} state=present
+  with_items:
+    - netrom
+    - ax25
+    - rose

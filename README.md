@@ -41,6 +41,8 @@ Examples
     - lxc_domain: mydomain.lan
     - lxc_ipnet: 192.168.0.0/24
     - lxc_dhcp_range: 192.168.0.50,192.168.0.200,1h
+    - lxcbr0_ip: 192.168.0.1
+    - lxcbr0_netmask: 255.255.255.0
 ```
 
 Dependencies
