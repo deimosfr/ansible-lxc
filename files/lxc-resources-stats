@@ -1,0 +1,19 @@
+#!/bin/bash
+
+cd /sys/fs/cgroup/lxc/
+for i in * ; do
+    if [ -d $i ] ; then
+        echo "===== $i ====="
+        echo "CPU, cap:               " $(cat /sys/fs/cgroup/lxc/$i/cpuset.cpus)
+        echo "CPU, shares:            " $(cat /sys/fs/cgroup/lxc/$i/cpu.shares)
+        awk '{ printf "RAM, limit usage:        %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.limit_in_bytes
+        awk '{ printf "RAM+SWAP, limit usage:   %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.memsw.limit_in_bytes
+        awk '{ printf "RAM, current usage:      %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.usage_in_bytes
+        awk '{ printf "RAM+SWAP, current usage: %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.memsw.usage_in_bytes
+        awk '{ printf "RAM, max usage:          %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.max_usage_in_bytes
+        awk '{ printf "RAM+SWAP, max usage:     %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.memsw.max_usage_in_bytes
+        echo "DISK I/O weight:        " $(cat /sys/fs/cgroup/lxc/$i/blkio.weight)
+        echo ""
+    fi
+done
+
