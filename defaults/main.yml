@@ -1,0 +1,8 @@
+# The DNS domain where LXC containers should belong to
+lxc_domain: mydomain.lan
+# The subnet for DHCP server served by dnsmasq
+lxc_ipnet: 192.168.0.0/24
+# The DHCP range served by dnsmasq with the lease time
+lxc_dhcp_range: 192.168.0.50,192.168.0.200,1h
+# Set network mode: nat or bridge
+lxc_network_mode: bridge
