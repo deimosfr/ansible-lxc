@@ -18,9 +18,11 @@ iface lxcbr0 inet static
     netmask {{ lxcbr0_netmask }}
     gateway {{ ansible_default_ipv4.gateway }}
     network {{ ansible_default_ipv4.network }}
+    dns-nameservers 8.8.8.8
     #pre-up brctl addbr lxcbr0
     bridge_fd 0
     bridge_maxwait 0
+    dns-nameservers 8.8.8.8
     bridge_ports eth0
     bridge_hello 2
     bridge_maxage 12

@@ -9,12 +9,18 @@ lxc.network.veth.pair = veth-<name>
 # Network container side
 lxc.network.name = eth0
 lxc.network.ipv4 = 0.0.0.0/24
+#lxc.network.ipv4.gateway = auto
 
+{% if ansible_distribution_release == 'wheezy' %}
 # Fix shutdown issues
 lxc.cap.drop = sys_admin
+{% endif %}
 
 ## Limits
 lxc.cgroup.cpuset.cpus                 = <cpu>
 lxc.cgroup.memory.limit_in_bytes       = <ram>
 lxc.cgroup.memory.memsw.limit_in_bytes = <swap>
 lxc.cgroup.blkio.weight                = <iosched>
+
+# Autostart
+lxc.start.auto                         = <autostart>

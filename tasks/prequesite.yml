@@ -3,9 +3,7 @@
 
 - name: adding backport repository
   apt_repository: repo='deb http://ftp.fr.debian.org/debian wheezy-backports main' state=present
-
-#- name: add debian pinning
-#  copy: src=kernel.list dest=/etc/apt/preferences.d/kernel.list owner=root group=root mode=0644
+  when: ansible_distribution_release == 'wheezy'
 
 # Enable ip_forward
 - sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes

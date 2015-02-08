@@ -1,19 +1,45 @@
 #!/bin/bash
 
-cd /sys/fs/cgroup/lxc/
-for i in * ; do
-    if [ -d $i ] ; then
-        echo "===== $i ====="
-        echo "CPU, cap:               " $(cat /sys/fs/cgroup/lxc/$i/cpuset.cpus)
-        echo "CPU, shares:            " $(cat /sys/fs/cgroup/lxc/$i/cpu.shares)
-        awk '{ printf "RAM, limit usage:        %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.limit_in_bytes
-        awk '{ printf "RAM+SWAP, limit usage:   %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.memsw.limit_in_bytes
-        awk '{ printf "RAM, current usage:      %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.usage_in_bytes
-        awk '{ printf "RAM+SWAP, current usage: %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.memsw.usage_in_bytes
-        awk '{ printf "RAM, max usage:          %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.max_usage_in_bytes
-        awk '{ printf "RAM+SWAP, max usage:     %sM\n", $1/ 1024/1024 }' /sys/fs/cgroup/lxc/$i/memory.memsw.max_usage_in_bytes
-        echo "DISK I/O weight:        " $(cat /sys/fs/cgroup/lxc/$i/blkio.weight)
-        echo ""
+for i in $(lxc-ls --active -1) ; do
+    # Debian Wheezy
+    if [ -d /sys/fs/cgroup/lxc ] ; then
+        dir='/sys/fs/cgroup/lxc'
+        cpuset="$dir/$i/cpuset.cpus"
+        cpushare="$dir/$1/cpu.shares"
+        memlimit="$dir/$1/memory.limit_in_bytes"
+        memswlimit="$dir/$i/memory.memsw.limit_in_bytes"
+        memusage="$dir/$i/memory.usage_in_bytes"
+        memswusage="$dir/$i/memory.memsw.usage_in_bytes"
+        maxusage="$dir/$i/memory.max_usage_in_bytes"
+        memswmaxusage="$dir/$i/memory.memsw.max_usage_in_bytes"
+        blkio="$dir/$i/blkio.weight"
+    # Debian Jessie
+    elif [ -d /sys/fs/cgroup/cpu/lxc ] ; then
+        dir='/sys/fs/cgroup'
+        cpuset="$dir/cpuset/lxc/$i/cpuset.cpus"
+        cpushare="$dir/cpu,cpuacct/lxc/$i/cpu.shares"
+        memlimit="$dir/memory/lxc/$i/memory.limit_in_bytes"
+        memswlimit="$dir/memory/lxc/$i/memory.memsw.limit_in_bytes"
+        memusage="$dir/memory/lxc/$i/memory.usage_in_bytes"
+        memswusage="$dir/memory/lxc/$i/memory.memsw.usage_in_bytes"
+        maxusage="$dir/memory/lxc/$i/memory.max_usage_in_bytes"
+        memswmaxusage="$dir/memory/lxc/$i/memory.memsw.max_usage_in_bytes"
+        blkio="$dir/blkio/lxc/$i/blkio.weight"
+    else
+        echo "Can't locate cgroup filesystem"
+        exit 1
     fi
+
+    echo "===== $i ====="
+    echo "CPU, cap:               " $(cat $cpuset)
+    echo "CPU, shares:            " $(cat $cpushare)
+    awk '{ printf "RAM, limit usage:        %sM\n", $1/ 1024 / 1024 }' $memlimit
+    awk '{ printf "RAM+SWAP, limit usage:   %sM\n", $1/ 1024 / 1024 }' $memswlimit
+    awk '{ printf "RAM, current usage:      %sM\n", $1/ 1024 / 1024 }' $memusage
+    awk '{ printf "RAM+SWAP, current usage: %sM\n", $1/ 1024 / 1024 }' $memswusage
+    awk '{ printf "RAM, max usage:          %sM\n", $1/ 1024 / 1024 }' $maxusage
+    awk '{ printf "RAM+SWAP, max usage:     %sM\n", $1/ 1024 / 1024 }' $memswmaxusage
+    echo "DISK I/O weight:        " $(cat $blkio)
+    echo ""
 done
 

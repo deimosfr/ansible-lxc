@@ -15,6 +15,7 @@ iface eth0 inet static
     netmask {{ ansible_default_ipv4.netmask }}
     gateway {{ ansible_default_ipv4.gateway }}
     network {{ ansible_default_ipv4.network }}
+    dns-nameservers 8.8.8.8
 
 auto lxcbr0
 iface lxcbr0 inet static
