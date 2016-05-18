@@ -41,7 +41,7 @@
 
 # network interface
 - name: configure network interfaces (NAT mode)
-  template: src=interfaces_nat.j2 dest=/etc/network/interfaces backup=yes
+  template: src=interfaces_nat.j2 dest=/etc/network/interfaces.d/lxc backup=yes
   when: lxc_network_mode == 'nat'
 
 # network interface
