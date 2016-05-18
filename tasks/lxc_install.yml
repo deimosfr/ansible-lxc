@@ -55,7 +55,15 @@
 
 # Dnsmasq
 - name: configure dnsmasq
-  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.conf owner=root group=root mode=0644
+  template: src=dnsmasq.lxc.conf.j2 dest=/etc/dnsmasq.d/lxc.conf owner=root group=root mode=0644
+  register: dnsmasq
+
+- name: restart dnsmasq
+  service: name=dnsmasq state=restarted
+  when: dnsmasq.changed
+
+- name: configure lxcbr0 dnsmasq
+  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.lxcbr0.conf owner=root group=root mode=0644
 
 # LXC network template
 - name: add network template
