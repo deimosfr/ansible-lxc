@@ -1,22 +1,5 @@
 # {{ ansible_managed }}
 
-# This file describes the network interfaces available on your system
-# and how to activate them. For more information, see interfaces(5).
-
-# The loopback network interface
-auto lo
-iface lo inet loopback
-
-# The primary network interface
-allow-hotplug eth0
-auto eth0
-iface eth0 inet static
-    address {{ ansible_default_ipv4.address }}
-    netmask {{ ansible_default_ipv4.netmask }}
-    gateway {{ ansible_default_ipv4.gateway }}
-    network {{ ansible_default_ipv4.network }}
-    dns-nameservers 8.8.8.8
-
 auto lxcbr0
 iface lxcbr0 inet static
     pre-up brctl addbr lxcbr0
@@ -29,6 +12,3 @@ iface lxcbr0 inet static
     # add checksum so that dhclient does not complain.
     # udp packets staying on the same host never have a checksum filled else
     post-up iptables -A POSTROUTING -t mangle -p udp --dport bootpc -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j CHECKSUM --checksum-fill
-
-source /etc/network/interfaces.d/*.cfg
-
