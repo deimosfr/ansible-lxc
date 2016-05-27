@@ -4,5 +4,7 @@ lxc_domain: mydomain.lan
 lxc_ipnet: 192.168.0.0/24
 # The DHCP range served by dnsmasq with the lease time
 lxc_dhcp_range: 192.168.0.50,192.168.0.200,1h
+# The lease file for dnsmasq
+lxc_dhcp_leasefile: /var/lib/misc/dnsmasq.lxcbr0.leases
 # Set network mode: nat or bridge
 lxc_network_mode: bridge
