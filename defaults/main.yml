@@ -8,3 +8,5 @@ lxc_dhcp_range: 192.168.0.50,192.168.0.200,1h
 lxc_dhcp_leasefile: /var/lib/misc/dnsmasq.lxcbr0.leases
 # Set network mode: nat or bridge
 lxc_network_mode: bridge
+# Whether to start and stop dnsmasq with iface
+lxc_tight_dedicated_dnsmasq: true
