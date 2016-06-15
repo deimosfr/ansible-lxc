@@ -12,3 +12,7 @@ iface lxcbr0 inet static
     # add checksum so that dhclient does not complain.
     # udp packets staying on the same host never have a checksum filled else
     post-up iptables -A POSTROUTING -t mangle -p udp --dport bootpc -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j CHECKSUM --checksum-fill
+    {% if lxc_tight_dedicated_dnsmasq %}
+    post-up dnsmasq --pid-file=/var/run/lxc-dnsmasq.$IFACE.pid --conf-file=/etc/dnsmasq.$IFACE.conf
+    post-down kill $(cat /var/run/lxc-dnsmasq.$IFACE.pid) || true
+    {% endif %}
