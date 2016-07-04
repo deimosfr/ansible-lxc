@@ -10,3 +10,7 @@ lxc_dhcp_leasefile: /var/lib/misc/dnsmasq.lxcbr0.leases
 lxc_network_mode: bridge
 # Whether to start and stop dnsmasq with iface
 lxc_tight_dedicated_dnsmasq: true
+# bridge IP (NAT mode)
+lxcbr0_ip: 192.168.0.1
+# bridge netmask (NAT mode)
+lxcbr0_netmask: 255.255.255.0
