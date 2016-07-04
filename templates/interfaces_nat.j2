@@ -7,12 +7,15 @@ iface lxcbr0 inet static
     bridge_ports none
     address {{ lxcbr0_ip }}
     netmask {{ lxcbr0_netmask }}
-    post-up iptables -A FORWARD -i lxcbr0 -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j ACCEPT
-    post-up iptables -A POSTROUTING -t nat -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j MASQUERADE
+    post-up   iptables -A FORWARD -i $IFACE -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j ACCEPT
+    post-down iptables -D FORWARD -i $IFACE -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j ACCEPT || true
+    post-up   iptables -A POSTROUTING -t nat -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j MASQUERADE
+    post-down iptables -D POSTROUTING -t nat -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j MASQUERADE || treu
     # add checksum so that dhclient does not complain.
     # udp packets staying on the same host never have a checksum filled else
-    post-up iptables -A POSTROUTING -t mangle -p udp --dport bootpc -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j CHECKSUM --checksum-fill
+    post-up   iptables -A POSTROUTING -t mangle -p udp --dport bootpc -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j CHECKSUM --checksum-fill
+    post-down iptables -D POSTROUTING -t mangle -p udp --dport bootpc -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j CHECKSUM --checksum-fill || true
     {% if lxc_tight_dedicated_dnsmasq %}
-    post-up dnsmasq --pid-file=/var/run/lxc-dnsmasq.$IFACE.pid --conf-file=/etc/dnsmasq.$IFACE.conf
+    post-up   dnsmasq --pid-file=/var/run/lxc-dnsmasq.$IFACE.pid --conf-file=/etc/dnsmasq.$IFACE.conf
     post-down kill $(cat /var/run/lxc-dnsmasq.$IFACE.pid) || true
     {% endif %}
