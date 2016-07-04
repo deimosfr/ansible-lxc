@@ -69,6 +69,9 @@
 - name: add network template
   template: src=lxc-template.conf.j2 dest=/etc/lxc/lxc-template.conf owner=root group=root mode=0644
 
+- name: Start lxcbr0
+  shell: ifup lxcbr0
+
 # Add lxc-convert
 - copy: src=lxc-convert dest=/usr/bin/lxc-convert owner=root group=root mode=0755
 
