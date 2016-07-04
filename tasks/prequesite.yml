@@ -1,15 +1,14 @@
 ---
-# LXC prequesite
 
 - name: adding backport repository
   apt_repository: repo='deb http://ftp.fr.debian.org/debian wheezy-backports main' state=present
   when: ansible_distribution_release == 'wheezy'
 
-# Enable ip_forward
-- sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+- name: enable ip_forward sysctl
+  sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
 
 # Avoid a bug in Debian with latest kernel (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=679086)
-- name: blacklist modules
+- name: blacklist kernel modules
   kernel_blacklist: name={{ item }} state=present
   with_items:
     - netrom

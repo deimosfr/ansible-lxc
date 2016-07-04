@@ -1,7 +1,6 @@
 ---
 
-# Install LXC
-- name: install packages
+- name: install LXC packages
   apt: name={{ item }} state=present force=yes
   tags: lxc
   with_items:
@@ -15,8 +14,7 @@
     - kexec-tools
     - cgroupfs-mount
 
-# Install latest kernel image from backports
-- name: install backport kernel
+- name: install latest kernel image from backports
   apt: name=linux-image-amd64 state=latest default_release=wheezy-backports force=yes
   when: ansible_distribution_release == 'wheezy'
 
@@ -32,28 +30,24 @@
   copy: src=lxc-debian-0.9.0-upstream-wheezy dest=/usr/share/lxc/templates/lxc-debian-wheezy owner=root group=root mode=0755
   when: lxc_template_absent|success and ansible_distribution_release == 'wheezy'
 
-# Grub
-- lineinfile: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX_DEFAULT' line='GRUB_CMDLINE_LINUX_DEFAULT="quiet cgroup_enable=memory swapaccount=1"' backup=yes
+- name: enable memory cgroup in GRUB
+  lineinfile: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX_DEFAULT' line='GRUB_CMDLINE_LINUX_DEFAULT="quiet cgroup_enable=memory swapaccount=1"' backup=yes
   notify: update grub
 
-# Mount cgroup+fstab
-- mount: src=cgroup name='/sys/fs/cgroup' opts=defaults fstype=cgroup state=mounted
+- name: mount cgroup sysfs
+  mount: src=cgroup name='/sys/fs/cgroup' opts=defaults fstype=cgroup state=mounted
 
-# Create interfaces.d
 - name: create interfaces.d if not exist
   file: path=/etc/network/interfaces.d/ owner=root group=root mode=0755 state=directory
 
-# network interface
 - name: configure network interfaces (NAT mode)
   template: src=interfaces_nat.j2 dest=/etc/network/interfaces.d/lxc
   when: lxc_network_mode == 'nat'
 
-# network interface
 - name: configure network interfaces (BRIDGE mode)
   template: src=interfaces_bridge.j2 dest=/etc/network/interfaces backup=yes
   when: lxc_network_mode == 'bridge'
 
-# Dnsmasq
 - name: configure dnsmasq
   template: src=dnsmasq.lxc.conf.j2 dest=/etc/dnsmasq.d/lxc.conf owner=root group=root mode=0644
   register: dnsmasq
@@ -65,15 +59,14 @@
 - name: configure lxcbr0 dnsmasq
   template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.lxcbr0.conf owner=root group=root mode=0644
 
-# LXC network template
-- name: add network template
+- name: add LXC template with network
   template: src=lxc-template.conf.j2 dest=/etc/lxc/lxc-template.conf owner=root group=root mode=0644
 
-- name: Start lxcbr0
+- name: start lxcbr0
   shell: ifup lxcbr0
 
-# Add lxc-convert
-- copy: src=lxc-convert dest=/usr/bin/lxc-convert owner=root group=root mode=0755
+- name: add lxc-convert
+  copy: src=lxc-convert dest=/usr/bin/lxc-convert owner=root group=root mode=0755
 
-# Add lxc-resources-stats
-- copy: src=lxc-resources-stats dest=/usr/bin/lxc-resources-stats owner=root group=root mode=0755
+- name: add lxc-resources-stats
+  copy: src=lxc-resources-stats dest=/usr/bin/lxc-resources-stats owner=root group=root mode=0755
