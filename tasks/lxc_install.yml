@@ -39,6 +39,10 @@
 # Mount cgroup+fstab
 - mount: src=cgroup name='/sys/fs/cgroup' opts=defaults fstype=cgroup state=mounted
 
+# Create interfaces.d
+- name: create interfaces.d if not exist
+  file: path=/etc/network/interfaces.d/ owner=root group=root mode=0755 state=directory
+
 # network interface
 - name: configure network interfaces (NAT mode)
   template: src=interfaces_nat.j2 dest=/etc/network/interfaces.d/lxc
@@ -48,10 +52,6 @@
 - name: configure network interfaces (BRIDGE mode)
   template: src=interfaces_bridge.j2 dest=/etc/network/interfaces backup=yes
   when: lxc_network_mode == 'bridge'
-
-# Create interfaces.d
-- name: create interfaces.d if not exist
-  file: path=/etc/network/interfaces.d/ owner=root group=root mode=0755 state=directory
 
 # Dnsmasq
 - name: configure dnsmasq
