@@ -2,9 +2,9 @@
 
 auto lxcbr0
 iface lxcbr0 inet static
-    pre-up brctl addbr lxcbr0
     bridge_fd 0
     bridge_maxwait 0
+    bridge_ports none
     address {{ lxcbr0_ip }}
     netmask {{ lxcbr0_netmask }}
     post-up iptables -A FORWARD -i lxcbr0 -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j ACCEPT
