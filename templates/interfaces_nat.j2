@@ -10,7 +10,7 @@ iface lxcbr0 inet static
     post-up   iptables -A FORWARD -i $IFACE -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j ACCEPT
     post-down iptables -D FORWARD -i $IFACE -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j ACCEPT || true
     post-up   iptables -A POSTROUTING -t nat -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j MASQUERADE
-    post-down iptables -D POSTROUTING -t nat -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j MASQUERADE || treu
+    post-down iptables -D POSTROUTING -t nat -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j MASQUERADE || true
     # add checksum so that dhclient does not complain.
     # udp packets staying on the same host never have a checksum filled else
     post-up   iptables -A POSTROUTING -t mangle -p udp --dport bootpc -s {{ lxcbr0_ip }}/{{ lxcbr0_netmask }} -j CHECKSUM --checksum-fill
