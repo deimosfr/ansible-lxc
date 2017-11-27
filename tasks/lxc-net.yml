@@ -1,0 +1,11 @@
+- name: configure lxc-net
+  template:
+    src: lxc-net.j2
+    dest: /etc/default/lxc-net
+  register: lxc_net
+
+- name: start lxc-net
+  when: lxc_net|changed
+  service:
+    name: lxc-net
+    state: restarted

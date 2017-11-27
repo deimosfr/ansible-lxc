@@ -2,3 +2,5 @@
 
 - include: prequesite.yml
 - include: lxc_install.yml
+- when: lxc_network_mode == 'lxc-net'
+  include: lxc-net.yml
