@@ -6,3 +6,5 @@
   include: bridge.yml
 - when: lxc_network_mode == 'lxc-net'
   include: lxc-net.yml
+- when: lxc_network_mode == 'nat'
+  include: nat.yml

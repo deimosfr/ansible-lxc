@@ -1,0 +1,12 @@
+- name: NAT | configure lxcbr0 dnsmasq
+  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.lxcbr0.conf owner=root group=root mode=0644
+  when: lxc_tight_dedicated_dnsmasq
+
+- name: NAT | create interfaces.d
+  file: path=/etc/network/interfaces.d/ owner=root group=root mode=0755 state=directory
+
+- name: NAT | configure network interfaces
+  template: src=interfaces_nat.j2 dest=/etc/network/interfaces.d/lxc
+
+- name: NAT | start lxcbr0
+  shell: ifup lxcbr0
