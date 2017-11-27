@@ -1,11 +1,17 @@
-- name: configure lxc-net
+- name: LXC-NET | configure /etc/default/lxc-net
   template:
     src: lxc-net.j2
     dest: /etc/default/lxc-net
-  register: lxc_net
+  register: etc_default
 
-- name: start lxc-net
-  when: lxc_net|changed
+- name: LXC-NET | configure dnsmasq
+  template:
+    src: dnsmasq.lxc-net.conf.j2
+    dest: /etc/lxc/dnsmasq.conf
+  register: dnsmasq_conf
+
+- name: LXC-NET | start service
+  when: etc_default|changed or dnsmasq_conf|changed
   service:
     name: lxc-net
     state: restarted

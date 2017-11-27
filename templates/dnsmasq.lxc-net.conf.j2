@@ -1,0 +1,4 @@
+# Don't publish LXC host /etc/hosts on guests
+no-hosts
+# Add wildcard record to resolve LXC host
+address=/.{{ ansible_hostname }}.{{ lxc_domain }}/{{ lxcbr0_ip }}
