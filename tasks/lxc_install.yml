@@ -44,11 +44,7 @@
   template: src=interfaces_nat.j2 dest=/etc/network/interfaces.d/lxc
   when: lxc_network_mode == 'nat'
 
-- name: configure network interfaces (BRIDGE mode)
-  template: src=interfaces_bridge.j2 dest=/etc/network/interfaces backup=yes
-  when: lxc_network_mode == 'bridge'
-
-- name: configure dnsmasq
+- name: configure host dnsmasq
   template: src=dnsmasq.lxc.conf.j2 dest=/etc/dnsmasq.d/lxc.conf owner=root group=root mode=0644
   register: dnsmasq
 
@@ -64,7 +60,7 @@
   template: src=lxc-template.conf.j2 dest=/etc/lxc/lxc-template.conf owner=root group=root mode=0644
 
 - name: start lxcbr0
-  when: lxc_network_mode in ('nat', 'bridge')
+  when: lxc_network_mode == 'nat'
   shell: ifup lxcbr0
 
 - name: add lxc-convert

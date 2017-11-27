@@ -1,0 +1,5 @@
+- name: BRIDGE | configure network interfaces
+  template: src=interfaces_bridge.j2 dest=/etc/network/interfaces backup=yes
+
+- name: BRIDGE | start lxcbr0
+  shell: ifup lxcbr0
