@@ -37,6 +37,21 @@ bridge.server.lan lxcbr0_ip=10.0.0.1 lxc_ipnet=10.0.0.0/24 lxc_dhcp_range=10.0.0
 nat.server.lan lxcbr0_ip=192.168.0.1 lxc_ipnet=192.168.0.0/24 lxc_dhcp_range=192.168.0.200,192.168.0.220,1h lxc_network_mode=lxc-net
 ```
 
+Network modes
+-------------
+
+This roles setup network for containers in one of the following mode:
+
+- `lxc-net`: setup `lxc-net` service for NAT, DHCP and DNS resolution.
+- `nat`: Create a dedicated `lxcbr0` in `/etc/network/interfaces.d` and setup
+  NAT with `iptables`. With `lxc_tight_dedicated_dnsmasq: yes`, you have a
+  dedicated DHCP server for your containers. This is an Ansible implementation
+  of `lxc-net` service.
+- `bridge`: takes control of `/etc/network/interfaces`, creates a `lxcbr0`
+  bridge with `eth0` in. This allow to share containers to the world, without
+  NAT.
+
+
 Examples
 ========
 
