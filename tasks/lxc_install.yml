@@ -37,24 +37,7 @@
 - name: mount cgroup sysfs
   mount: src=cgroup name='/sys/fs/cgroup' opts=defaults fstype=cgroup state=mounted
 
-- name: create interfaces.d if not exist
-  file: path=/etc/network/interfaces.d/ owner=root group=root mode=0755 state=directory
-
-- name: configure network interfaces (NAT mode)
-  template: src=interfaces_nat.j2 dest=/etc/network/interfaces.d/lxc
-  when: lxc_network_mode == 'nat'
-
-- name: configure network interfaces (BRIDGE mode)
-  template: src=interfaces_bridge.j2 dest=/etc/network/interfaces backup=yes
-  when: lxc_network_mode == 'bridge'
-
-- name: configure lxc-net
-  template:
-    src: lxc-net.j2
-    dest: /etc/default/lxc-net
-  register: lxc_net
-
-- name: configure dnsmasq
+- name: configure host dnsmasq
   template: src=dnsmasq.lxc.conf.j2 dest=/etc/dnsmasq.d/lxc.conf owner=root group=root mode=0644
   register: dnsmasq
 
@@ -62,22 +45,8 @@
   service: name=dnsmasq state=restarted
   when: dnsmasq.changed
 
-- name: configure lxcbr0 dnsmasq
-  template: src=dnsmasq.conf.j2 dest=/etc/dnsmasq.lxcbr0.conf owner=root group=root mode=0644
-  when: lxc_tight_dedicated_dnsmasq
-
 - name: add LXC template with network
   template: src=lxc-template.conf.j2 dest=/etc/lxc/lxc-template.conf owner=root group=root mode=0644
-
-- name: start lxcbr0
-  when: lxc_network_mode in ('nat', 'bridge')
-  shell: ifup lxcbr0
-
-- name: start lxc-net
-  when: lxc_net|changed
-  service:
-    name: lxc-net
-    state: restarted
 
 - name: add lxc-convert
   copy: src=lxc-convert dest=/usr/bin/lxc-convert owner=root group=root mode=0755
