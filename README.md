@@ -52,6 +52,17 @@ This roles setup network for containers in one of the following mode:
   NAT.
 
 
+DNS resolution for containers
+-----------------------------
+
+Having DNS resolution of container is very confortable. The idea is to have a
+`dnsmasq` running on host with a DNS delegation for `.lxc` domains to a
+dedicated `dnsmasq` instance managing containers IP and names.
+
+A wildcard record is registerd for the host. All containers can resolve host IP
+in container network with e.g. `lxchost.lxc`.
+
+
 Examples
 ========
 
