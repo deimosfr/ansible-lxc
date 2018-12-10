@@ -11,7 +11,7 @@
   register: dnsmasq_conf
 
 - name: LXC-NET | start service
-  when: etc_default|changed or dnsmasq_conf|changed
+  when: etc_default is changed or dnsmasq_conf is changed
   service:
     name: lxc-net
     state: restarted
